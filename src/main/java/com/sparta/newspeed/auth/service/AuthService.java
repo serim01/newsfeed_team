@@ -18,23 +18,6 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
-    public void signup(LoginRequestDto requestDto) {
-        String userId = requestDto.getUserId();
-        String password = passwordEncoder.encode(requestDto.getPassword());
-
-        // 회원 중복 확인
-        Optional<User> checkUsername = userRepository.findByUserId(userId);
-        if (checkUsername.isPresent()) {
-            throw new IllegalArgumentException("중복된 사용자가 존재합니다.");
-        }
-
-        // 사용자 ROLE 확인
-        UserRoleEnum role = UserRoleEnum.USER;
-
-        // 사용자 등록
-        User user = new User(userId, password, role);
-        userRepository.save(user);
-    }
     public String login(LoginRequestDto requestDto, HttpServletResponse response) {
         String userId = requestDto.getUserId();
         String password = requestDto.getPassword();

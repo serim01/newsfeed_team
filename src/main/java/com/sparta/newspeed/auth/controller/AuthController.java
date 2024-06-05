@@ -7,10 +7,7 @@ import com.sparta.newspeed.security.util.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.java.Log;
-import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -23,11 +20,6 @@ public class AuthController {
         String token = authService.login(requestDto, response);
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, token);
         return "로그인 성공" + response.getStatus();
-    }
-    @PostMapping("/signup")
-    public String signup(@RequestBody LoginRequestDto requestDto, HttpServletResponse response) {
-        authService.signup(requestDto);
-        return "회원가입 성공" + response.getStatus();
     }
     @DeleteMapping("/logout")
     public String logout(@AuthenticationPrincipal UserDetailsImpl userDetails, HttpServletRequest request, HttpServletResponse response) {
