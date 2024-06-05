@@ -66,6 +66,9 @@ public class AuthService {
         if((!passwordEncoder.matches(password, user.getUserPassword()))) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
+        if(user.getRole().equals(UserRoleEnum.WITHDRAW)) {
+            throw new CustomException(ErrorCode.USER_NOT_VALID);
+        }
         TokenDto token = jwtUtil.createToken(userId, UserRoleEnum.USER);
         user.setRefreshToken(token.getRefreshToken());
         userRepository.save(user);
