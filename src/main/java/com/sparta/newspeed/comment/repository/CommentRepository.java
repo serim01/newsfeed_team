@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Long> {
-    List<Comment> findByNewsfeedSeq(long newsfeedSeq);
+    List<Comment> findByNewsfeedNewsFeedSeq(long newsfeedSeq);
 }
