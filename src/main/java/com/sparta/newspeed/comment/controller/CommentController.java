@@ -53,7 +53,7 @@ public class CommentController {
     }
 
     @Operation(summary = "delete comment", description = "댓글 삭제 기능")
-    @PutMapping("/{newsfeedId}/comments/{commentId}")
+    @DeleteMapping("/{newsfeedId}/comments/{commentId}")
     public ResponseEntity<Void> deleteComment (
             @PathVariable(name = "newsfeedId") long newsfeedId,
             @PathVariable(name = "commentId") long commentId,

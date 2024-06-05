@@ -2,16 +2,14 @@ package com.sparta.newspeed.comment.entity;
 
 import com.sparta.newspeed.comment.dto.CommentRequestDto;
 import com.sparta.newspeed.common.Timestamped;
-import com.sparta.newspeed.user.entity.User;
 import com.sparta.newspeed.newsfeed.entity.Newsfeed;
+import com.sparta.newspeed.user.entity.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Getter

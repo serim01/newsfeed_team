@@ -46,7 +46,7 @@ public class CommentService {
 
     public List<CommentResponseDto> findAll(long newsfeedSeq) {
         // DB에 존재하는 comment list
-        List<Comment> commentList = commentRepository.findByNewsfeedSeq(newsfeedSeq);
+        List<Comment> commentList = commentRepository.findByNewsfeedNewsFeedSeq(newsfeedSeq);
 
         return commentList.stream()
                 .map(CommentResponseDto::new)
