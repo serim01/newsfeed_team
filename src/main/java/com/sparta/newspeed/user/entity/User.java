@@ -58,6 +58,13 @@ public class User extends Timestamped {
         this.role = role;
     }
 
+    public User(String userId, String userName, String password, UserRoleEnum role) {
+        this.userId = userId;
+        this.userName = userName;
+        this.userPassword = password;
+        this.role = role;
+    }
+
     public void updateUserInfo(UserInfoUpdateDto requestDto) {
         this.userName = requestDto.getName();
         this.userEmail = requestDto.getEmail();
@@ -66,5 +73,9 @@ public class User extends Timestamped {
 
     public void setUserPassword(String encNewPassword) {
         this.userPassword = encNewPassword;
+    }
+
+    public void UpdateRole(UserRoleEnum role){
+        this.role = role;
     }
 }
