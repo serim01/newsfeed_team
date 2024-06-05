@@ -5,6 +5,7 @@ import com.sparta.newspeed.user.dto.UserInfoUpdateDto;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -32,6 +33,7 @@ public class User extends Timestamped {
     @Column(name = "user_name")
     private String userName;
 
+    @NotBlank
     @Email
     @Column(name = "user_email")
     private String userEmail;
@@ -55,13 +57,6 @@ public class User extends Timestamped {
     public User(String userId, String userPassword, UserRoleEnum role) {
         this.userId = userId;
         this.userPassword = userPassword;
-        this.role = role;
-    }
-
-    public User(String userId, String userName, String password, UserRoleEnum role) {
-        this.userId = userId;
-        this.userName = userName;
-        this.userPassword = password;
         this.role = role;
     }
 

@@ -3,6 +3,8 @@ package com.sparta.newspeed.auth.service;
 import com.sparta.newspeed.auth.dto.LoginRequestDto;
 import com.sparta.newspeed.auth.dto.SignUpRequestDto;
 import com.sparta.newspeed.auth.dto.SignupResponseDto;
+import com.sparta.newspeed.common.exception.CustomException;
+import com.sparta.newspeed.common.exception.ErrorCode;
 import com.sparta.newspeed.security.util.JwtUtil;
 import com.sparta.newspeed.user.entity.User;
 import com.sparta.newspeed.user.entity.UserRoleEnum;
@@ -21,22 +23,30 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
-    public SignupResponseDto signup(SignUpRequestDto requestDto) {
-        String userId = requestDto.getUserId();
-        String userName = requestDto.getUserName();
-        String password = passwordEncoder.encode(requestDto.getPassword());
+    public SignupResponseDto signup(SignUpRequestDto request) {
+        String userId = request.getUserId();
+        String userName = request.getUserName();
+        String password = passwordEncoder.encode(request.getPassword());
+        String email = request.getEmail();
 
-        // 회원 아이디(이메일/username)중복 확인
+        // 회원 아이디 중복 확인
         Optional<User> checkUsername = userRepository.findByUserId(userId);
         if (checkUsername.isPresent()) {
-            throw new IllegalArgumentException("중복된 사용자가 존재합니다.");
+            throw new CustomException(ErrorCode.USER_NOT_UNIQUE);
         }
 
         // 사용자 ROLE 확인
         UserRoleEnum role = UserRoleEnum.USER;
 
         // 사용자 등록
-        User user = new User(userId,userName,password,role);
+        User user = User.builder()
+                .userId(userId)
+                .userName(userName)
+                .userPassword(password)
+                .userEmail(email)
+                .role(role)
+                .build();
+
         userRepository.save(user);
 
         return new SignupResponseDto(user);
