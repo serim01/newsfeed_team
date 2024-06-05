@@ -25,7 +25,9 @@ public class NewsfeedService {
     public List<NewsfeedResponseDto> getNewsfeeds() {
         List<Newsfeed> newsfeedList = newsfeedRespository.findAllByOrderByCreatedAtDesc()
                 .orElseThrow(()-> new CustomException(ErrorCode.NEWSFEED_NOT_FOUND));
-
+        if(newsfeedList.isEmpty()){
+            throw new CustomException(ErrorCode.NEWSFEED_EMPTY);
+        }
         return newsfeedList.stream().map(NewsfeedResponseDto::new)
                 .toList();
     }
