@@ -78,4 +78,8 @@ public class User extends Timestamped {
     public void UpdateRole(UserRoleEnum role){
         this.role = role;
     }
+
+    public void setRefreshToken(String token) {
+        this.refreshToken = token;
+    }
 }
