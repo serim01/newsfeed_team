@@ -1,7 +1,5 @@
 package com.sparta.newspeed.user.controller;
 
-import com.sparta.newspeed.auth.dto.SignUpRequestDto;
-import com.sparta.newspeed.auth.dto.SignupResponseDto;
 import com.sparta.newspeed.security.service.UserDetailsImpl;
 import com.sparta.newspeed.user.dto.UserInfoUpdateDto;
 import com.sparta.newspeed.user.dto.UserPwRequestDto;
@@ -47,7 +45,7 @@ public class UserController {
     @PostMapping("/withdraw")
     public ResponseEntity<String> Withdraw(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                            @RequestBody @Valid UserStatusDto requestDto){
-        userService.Withdraw(userDetails.getUser().getUserSeq(), requestDto.getPassword());
+        userService.Withdraw(userDetails.getUser().getUserSeq(), requestDto);
         return ResponseEntity.ok("Update user withdraw");
     }
 }

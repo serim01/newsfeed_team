@@ -54,11 +54,22 @@ public class UserService {
     }
 
     @Transactional
-    public void Withdraw(Long userSeq, String password) {
+    public void Withdraw(Long userSeq, UserStatusDto requestDto) {
         User user = findById(userSeq);
-        if (!passwordEncoder.matches(password, user.getUserPassword())) {
+
+        // ID가 일치하지 않을 경우
+        if(!requestDto.getUserId().equals(user.getUserId())){
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        }
+        // PW가 일치하지 않을 경우
+        if (!passwordEncoder.matches(requestDto.getPassword(), user.getUserPassword())) {
             throw new CustomException(ErrorCode.INCORRECT_PASSWORD);
         }
+        // 회원이 이미 탈퇴 상태일 경우
+        if (user.getRole().equals(UserRoleEnum.WITHDRAW)){
+            throw new CustomException(ErrorCode.USER_NOT_VALID);
+        }
+
         // 회원 상태를 탈퇴로 변경
         user.UpdateRole(UserRoleEnum.WITHDRAW);
     }
