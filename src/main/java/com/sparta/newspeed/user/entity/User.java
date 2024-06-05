@@ -4,16 +4,15 @@ import com.sparta.newspeed.common.Timestamped;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Getter
 @Table(name = "users")
+@NoArgsConstructor
 public class User extends Timestamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -51,6 +50,11 @@ public class User extends Timestamped {
     @Column(name = "status_modified")
     private LocalDateTime statusModified;
 
+    public User(String userId, String userPassword, UserRoleEnum role) {
+        this.userId = userId;
+        this.userPassword = userPassword;
+        this.role = role;
+    }
 
     public User(String userId, String userName, String password, UserRoleEnum role) {
         this.userId = userId;
