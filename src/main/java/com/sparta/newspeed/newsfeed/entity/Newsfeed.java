@@ -1,12 +1,16 @@
 package com.sparta.newspeed.newsfeed.entity;
 
 import com.sparta.newspeed.common.Timestamped;
+import com.sparta.newspeed.newsfeed.dto.NewsfeedRequestDto;
 import com.sparta.newspeed.user.entity.User;
 import jakarta.persistence.*;
-import lombok.Getter;
+import lombok.*;
 
 @Entity
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
 @Table(name = "newsfeed")
 public class Newsfeed extends Timestamped {
     @Id
@@ -21,13 +25,20 @@ public class Newsfeed extends Timestamped {
     private String content;
 
     @Column(name = "remain_member")
-    private int remain_member;
+    private int remainMember;
 
     @ManyToOne
     @JoinColumn(name = "user_seq")
     private User user;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "ott_seq")
     private Ott ott;
+
+    public void updateNewsfeed(NewsfeedRequestDto request,Ott ott) {
+        this.title = request.getTitle();
+        this.content = request.getContent();
+        this.remainMember = request.getRemainMember();
+        this.ott = ott;
+    }
 }
