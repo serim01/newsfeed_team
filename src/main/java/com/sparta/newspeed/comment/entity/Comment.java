@@ -1,9 +1,13 @@
 package com.sparta.newspeed.comment.entity;
 
+import com.sparta.newspeed.comment.dto.CommentRequestDto;
 import com.sparta.newspeed.common.Timestamped;
 import com.sparta.newspeed.user.entity.User;
 import com.sparta.newspeed.newsfeed.entity.Newsfeed;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -12,6 +16,8 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Table(name = "comments")
 public class Comment extends Timestamped {
 
@@ -20,14 +26,9 @@ public class Comment extends Timestamped {
     @Column(name = "comment_seq")
     private Long commentSeq;
 
+    @NotBlank
     @Column(name = "content")
     private String content;
-
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
-
-    @Column(name = "modified_at")
-    private LocalDateTime modifiedAt;
 
     @ManyToOne
     @JoinColumn(name = "user_seq")
@@ -36,4 +37,8 @@ public class Comment extends Timestamped {
     @ManyToOne
     @JoinColumn(name = "newsfeed_seq")
     private Newsfeed newsfeed;
+
+    public void update(CommentRequestDto requestDto) {
+        this.content = requestDto.getContent();
+    }
 }
