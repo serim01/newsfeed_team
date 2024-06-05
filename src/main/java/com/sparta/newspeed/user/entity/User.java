@@ -8,7 +8,6 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -52,6 +51,12 @@ public class User extends Timestamped {
 
     @Column(name = "status_modified")
     private LocalDateTime statusModified;
+
+    public User(String userId, String userPassword, UserRoleEnum role) {
+        this.userId = userId;
+        this.userPassword = userPassword;
+        this.role = role;
+    }
 
     public void updateUserInfo(UserInfoUpdateDto requestDto) {
         this.userName = requestDto.getName();
