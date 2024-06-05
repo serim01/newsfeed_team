@@ -21,10 +21,11 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
-    public SignupResponseDto signup(SignUpRequestDto requestDto) {
-        String userId = requestDto.getUserId();
-        String userName = requestDto.getUserName();
-        String password = passwordEncoder.encode(requestDto.getPassword());
+    public SignupResponseDto signup(SignUpRequestDto request) {
+        String userId = request.getUserId();
+        String userName = request.getUserName();
+        String password = passwordEncoder.encode(request.getPassword());
+        String email = request.getEmail();
 
         // 회원 아이디(이메일/username)중복 확인
         Optional<User> checkUsername = userRepository.findByUserId(userId);
@@ -36,7 +37,14 @@ public class AuthService {
         UserRoleEnum role = UserRoleEnum.USER;
 
         // 사용자 등록
-        User user = new User(userId,userName,password,role);
+        User user = User.builder()
+                .userId(userId)
+                .userName(userName)
+                .userPassword(password)
+                .userEmail(email)
+                .role(role)
+                .build();
+
         userRepository.save(user);
 
         return new SignupResponseDto(user);
