@@ -30,7 +30,7 @@ public class NewsfeedService {
                 .toList();
     }
     public NewsfeedResponseDto getNewsfeed(Long newsfeedSeq) {
-        Newsfeed newsfeed = findNewsfeed(newsfeedSeq, null);
+        Newsfeed newsfeed = findNewsfeed(newsfeedSeq);
         return new NewsfeedResponseDto(newsfeed);
     }
 
@@ -71,20 +71,22 @@ public class NewsfeedService {
         newsfeedRespository.delete(newsfeed);
     }
 
-    //조건에 맞는 newsfeed 가져오는 메서드
-    public Newsfeed findNewsfeed(Long newsfeedSeq, User user){
-        if(user == null){
-            return newsfeedRespository.findById(newsfeedSeq)
-                    .orElseThrow(() -> new CustomException(ErrorCode.NEWSFEED_NOT_FOUND));
-        }else {
-            newsfeedRespository.findById(newsfeedSeq)
-                    .orElseThrow(() -> new CustomException(ErrorCode.NEWSFEED_NOT_FOUND));
-            return newsfeedRespository.findByNewsFeedSeqAndUser(newsfeedSeq, user)
-                    .orElseThrow(() -> new CustomException(ErrorCode.NEWSFEED_NOT_USER));
-        }
+    //조회는 id 값만 존재하다면 user 상관없이 조회되어야함.
+    public Newsfeed findNewsfeed(Long newsfeedSeq) {
+        return newsfeedRespository.findById(newsfeedSeq)
+                .orElseThrow(() -> new CustomException(ErrorCode.NEWSFEED_NOT_FOUND));
+
     }
 
-    public Ott findOtt(NewsfeedRequestDto request){
+    //삭제, 수정에 필요한 newsfeed 가져오는 메서드
+    private Newsfeed findNewsfeed(Long newsfeedSeq, User user) {
+        newsfeedRespository.findById(newsfeedSeq)
+                .orElseThrow(() -> new CustomException(ErrorCode.NEWSFEED_NOT_FOUND));
+        return newsfeedRespository.findByNewsFeedSeqAndUser(newsfeedSeq, user)
+                .orElseThrow(() -> new CustomException(ErrorCode.NEWSFEED_NOT_USER));
+    }
+
+    private Ott findOtt(NewsfeedRequestDto request) {
         return ottRepository.findByOttName(request.getOttName()).
                 orElseThrow(()-> new CustomException(ErrorCode.OTT_NOT_FOUND));
     }
