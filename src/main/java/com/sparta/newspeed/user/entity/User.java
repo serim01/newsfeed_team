@@ -59,15 +59,7 @@ public class User extends Timestamped {
         this.userIntro = requestDto.getIntro();
     }
 
-    public boolean updateUserPassword(String newPassword) {
-        if (isPasswordEquals(newPassword)) {
-            this.userPassword = newPassword;
-            return true;
-        }
-        return false;
-    }
-
-    public boolean isPasswordEquals(String newPassword) {
-        return Objects.equals(this.userPassword, newPassword);
+    public void setUserPassword(String encNewPassword) {
+        this.userPassword = encNewPassword;
     }
 }

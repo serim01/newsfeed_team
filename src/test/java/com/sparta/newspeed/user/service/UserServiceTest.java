@@ -12,11 +12,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
+@SpringBootTest(properties = "spring.profiles.active:test")
 class UserServiceTest {
 
     @Autowired
@@ -24,6 +25,9 @@ class UserServiceTest {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
 //    @BeforeEach
 //    void init() {
@@ -75,8 +79,17 @@ class UserServiceTest {
 
     @DisplayName("유저 비밀번호를 변경한다.")
     @Test
-    @Transactional
     void updateUserPassword() {
+        User createUser = User.builder()
+                .userId("test1Id")
+                .userPassword("$2a$10$kNW.vlg0oQtNIiqU4LUR8eL3XkvdDc3WqB2kshkHZrjqhM/nj9UMS")
+                .userEmail("test1@test.com")
+                .userIntro("test1입니다.")
+                .userName("test1")
+                .role(UserRoleEnum.USER)
+                .build();
+        userRepository.save(createUser);
+
         UserPwRequestDto requestDto = new UserPwRequestDto(
                 "password",
                 "newPassword"
@@ -86,6 +99,6 @@ class UserServiceTest {
 
         User user = userService.findById(1L);
 
-        assertEquals(requestDto.getNewPassword(), user.getUserPassword());
+        assertEquals(passwordEncoder.matches("newPassword", user.getUserPassword()), true);
     }
 }
