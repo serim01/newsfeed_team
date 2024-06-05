@@ -12,14 +12,11 @@ import lombok.NoArgsConstructor;
 public class UserInfoUpdateDto {
     @Schema(description = "유저명")
     private String name;
-    @Schema(description = "유저 이메일")
-    private String email;
     @Schema(description = "유저 한줄 소개")
     private String intro;
 
     public UserInfoUpdateDto(User user) {
         this.name = user.getUserName();
-        this.email = user.getUserEmail();
         this.intro = user.getUserEmail();
     }
 }

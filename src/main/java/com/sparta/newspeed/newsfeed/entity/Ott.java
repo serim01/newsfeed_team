@@ -21,11 +21,11 @@ public class Ott {
     private int price;
 
     @Column(name = "max_member")
-    private int max_member;
+    private int maxMember;
 
-    public Ott(String ottName, int price, int max_member) {
+    public Ott(String ottName, int price, int maxMember) {
         this.ottName = ottName;
         this.price = price;
-        this.max_member = max_member;
+        this.maxMember = maxMember;
     }
 }
