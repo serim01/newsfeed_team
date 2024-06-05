@@ -1,4 +1,4 @@
-package com.sparta.newspeed.security.config;
+package com.sparta.newspeed.config;
 
 import com.sparta.newspeed.security.filter.JwtAuthorizationFilter;
 import com.sparta.newspeed.security.service.UserDetailsServiceImpl;
@@ -53,6 +53,7 @@ public class WebSecurityConfig {
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/newsfeeds/**").permitAll()
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/api-docs/**", "/swagger-resources/**, ").permitAll()
                         .anyRequest().authenticated() // 그 외 모든 요청 인증처리
         );
         // 로그인폼 사용 X
