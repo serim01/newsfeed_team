@@ -4,7 +4,9 @@ import com.sparta.newspeed.security.service.UserDetailsImpl;
 import com.sparta.newspeed.user.dto.UserInfoUpdateDto;
 import com.sparta.newspeed.user.dto.UserPwRequestDto;
 import com.sparta.newspeed.user.dto.UserResponseDto;
+import com.sparta.newspeed.user.dto.UserStatusDto;
 import com.sparta.newspeed.user.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -37,5 +39,13 @@ public class UserController {
                                                      @RequestBody @Valid UserPwRequestDto requestDto) {
         userService.updateUserPassword(userDetails.getUser().getUserSeq(), requestDto);
         return ResponseEntity.ok("Password updated");
+    }
+
+    @Operation(summary = "회원탈퇴", description = "회원의 상태를 변경")
+    @PostMapping("/withdraw")
+    public ResponseEntity<String> Withdraw(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                           @RequestBody @Valid UserStatusDto requestDto){
+        userService.Withdraw(userDetails.getUser().getUserSeq(), requestDto);
+        return ResponseEntity.ok("Update user withdraw");
     }
 }
