@@ -17,6 +17,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+
 
 @Tag(name = "인증 API",description = "인증 API")
 @RestController
@@ -30,8 +32,7 @@ public class AuthController {
     public String login(@RequestBody LoginRequestDto requestDto, HttpServletResponse response) {
         TokenDto token = authService.login(requestDto, response);
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, token.getAccessToken());
-        response.addHeader(JwtUtil.AUTHORIZATION_HEADER + "Refresh", token.getRefreshToken());
-
+        response.addHeader(JwtUtil.AUTHORIZATION_HEADER + "refresh", token.getRefreshToken());
         return "로그인 성공" + response.getStatus();
     }
 
@@ -41,8 +42,8 @@ public class AuthController {
         return authService.signup(requestDto);
     }
     @PostMapping("/reauth")
-    public String reAuth(HttpServletRequest request, HttpServletResponse response) {
-        String refreshtoken = request.getHeader(JwtUtil.AUTHORIZATION_HEADER + "Refresh");
+    public String reAuth(@RequestBody HashMap<String, String> bodyJson, HttpServletResponse response) {
+        String refreshtoken = bodyJson.get("refreshToken");
         String newAccessToken = authService.reAuth(refreshtoken);
         response.setHeader(JwtUtil.AUTHORIZATION_HEADER, newAccessToken);
 

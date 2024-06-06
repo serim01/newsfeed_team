@@ -83,7 +83,7 @@ public class AuthService {
         if(!jwtUtil.validateRefreshToken(subToken)) {
             throw new IllegalArgumentException("토큰이 만료되었습니다.");
         }
-        if(!jwtUtil.substringToken(refreshtoken).equals(user.getRefreshToken())) {
+        if(jwtUtil.substringToken(refreshtoken).equals(user.getRefreshToken())) {
             throw new IllegalArgumentException("토큰이 일치하지 않습니다.");
         }
         String userId = jwtUtil.getUserInfoFromToken(subToken).getSubject();
