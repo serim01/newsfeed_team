@@ -20,6 +20,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         User user = userRepository.findByUserIdAndRole(userId, UserRoleEnum.USER).orElseThrow(() ->
                 new UsernameNotFoundException("Not Found " + userId));
 
+        // 이미 탈퇴 처리된 회원일 경우
+        if (user.getRole() == UserRoleEnum.WITHDRAW) {
+            throw new UsernameNotFoundException("User has withdrawn " + userId);
+        }
+
         return new UserDetailsImpl(user);
     }
 }

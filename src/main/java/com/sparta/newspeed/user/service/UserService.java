@@ -1,9 +1,7 @@
 package com.sparta.newspeed.user.service;
 
-import com.sparta.newspeed.auth.dto.SignUpRequestDto;
 import com.sparta.newspeed.common.exception.CustomException;
 import com.sparta.newspeed.common.exception.ErrorCode;
-import com.sparta.newspeed.security.service.UserDetailsImpl;
 import com.sparta.newspeed.user.dto.UserInfoUpdateDto;
 import com.sparta.newspeed.user.dto.UserPwRequestDto;
 import com.sparta.newspeed.user.dto.UserResponseDto;
@@ -50,11 +48,15 @@ public class UserService {
             throw new CustomException(ErrorCode.INCORRECT_PASSWORD);
         }
 
-        user.setUserPassword(passwordEncoder.encode(requestDto.getNewPassword()));
+        if (passwordEncoder.matches(requestDto.getNewPassword(), user.getUserPassword())) {
+            throw new CustomException(ErrorCode.DUPLICATE_PASSWORD);
+        }
+
+        user.updatePassword(passwordEncoder.encode(requestDto.getNewPassword()));
     }
 
     @Transactional
-    public void Withdraw(Long userSeq, UserStatusDto requestDto) {
+    public void updateWithdraw(Long userSeq, UserStatusDto requestDto) {
         User user = findById(userSeq);
 
         // ID가 일치하지 않을 경우
@@ -71,7 +73,6 @@ public class UserService {
         }
 
         // 회원 상태를 탈퇴로 변경
-        user.UpdateRole(UserRoleEnum.WITHDRAW);
+        user.updateRole(UserRoleEnum.WITHDRAW);
     }
-
 }

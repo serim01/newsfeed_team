@@ -67,7 +67,7 @@ class UserServiceTest {
     void updateUser() {
         UserInfoUpdateDto updateUser = new UserInfoUpdateDto(
                 "updateName",
-                "test1@test1.com",
+//                "test1@test1.com",
                 "update_intro"
         );
         userService.updateUser(1L, updateUser);

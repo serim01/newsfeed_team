@@ -23,8 +23,7 @@ public class NewsfeedService {
     private final OttRepository ottRepository;
 
     public List<NewsfeedResponseDto> getNewsfeeds() {
-        List<Newsfeed> newsfeedList = newsfeedRespository.findAllByOrderByCreatedAtDesc()
-                .orElseThrow(()-> new CustomException(ErrorCode.NEWSFEED_NOT_FOUND));
+        List<Newsfeed> newsfeedList = newsfeedRespository.findAllByOrderByCreatedAtDesc();
         if(newsfeedList.isEmpty()){
             throw new CustomException(ErrorCode.NEWSFEED_EMPTY);
         }
@@ -53,7 +52,7 @@ public class NewsfeedService {
 
         Newsfeed saveNewsfeed = newsfeedRespository.save(newsfeed);
 
-        return new NewsfeedResponseDto(newsfeed);
+        return new NewsfeedResponseDto(saveNewsfeed);
     }
 
     @Transactional
@@ -82,8 +81,9 @@ public class NewsfeedService {
 
     //삭제, 수정에 필요한 newsfeed 가져오는 메서드
     private Newsfeed findNewsfeed(Long newsfeedSeq, User user) {
-        newsfeedRespository.findById(newsfeedSeq)
-                .orElseThrow(() -> new CustomException(ErrorCode.NEWSFEED_NOT_FOUND));
+        if (!newsfeedRespository.existsById(newsfeedSeq)) {
+            throw new CustomException(ErrorCode.NEWSFEED_NOT_FOUND);
+        }
         return newsfeedRespository.findByNewsFeedSeqAndUser(newsfeedSeq, user)
                 .orElseThrow(() -> new CustomException(ErrorCode.NEWSFEED_NOT_USER));
     }

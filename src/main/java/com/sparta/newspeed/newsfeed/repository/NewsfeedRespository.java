@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface NewsfeedRespository extends JpaRepository<Newsfeed, Long> {
-    Optional<List<Newsfeed>> findAllByOrderByCreatedAtDesc();
+    List<Newsfeed> findAllByOrderByCreatedAtDesc();
 
     Optional<Newsfeed> findByNewsFeedSeqAndUser(Long newsfeedSeq, User user);
 }

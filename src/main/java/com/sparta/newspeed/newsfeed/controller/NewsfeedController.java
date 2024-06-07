@@ -37,21 +37,21 @@ public class NewsfeedController {
 
     @Operation(summary = "getNewsfeed", description = "뉴스피드 선택조회 기능입니다.")
     @GetMapping("/{newsfeedSeq}")
-    private ResponseEntity<NewsfeedResponseDto> getNewsfeed(@PathVariable Long newsfeedSeq){
+    private ResponseEntity<NewsfeedResponseDto> getNewsfeed(@PathVariable("newsfeedSeq") Long newsfeedSeq){
         return ResponseEntity.ok().body(newsfeedService.getNewsfeed(newsfeedSeq));
     }
 
     @Operation(summary = "updateNewsfeed", description = "뉴스피드 수정 기능입니다.")
     @PutMapping("/{newsfeedSeq}")
-    private ResponseEntity<NewsfeedResponseDto> updateNewsfeed(@PathVariable Long newsfeedSeq, @Valid @RequestBody NewsfeedRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
+    private ResponseEntity<NewsfeedResponseDto> updateNewsfeed(@PathVariable("newsfeedSeq") Long newsfeedSeq, @Valid @RequestBody NewsfeedRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
         return ResponseEntity.ok().body(newsfeedService.updateNewsFeed(newsfeedSeq,requestDto,userDetails.getUser()));
     }
 
     @Operation(summary = "deleteNewsfeed", description = "뉴스피드 삭제 기능입니다.")
     @DeleteMapping("/{newsfeedSeq}")
-    private ResponseEntity<String> deleteNewsfeed(@PathVariable Long newsfeedSeq, @AuthenticationPrincipal UserDetailsImpl userDetails){
+    private ResponseEntity<String> deleteNewsfeed(@PathVariable("newsfeedSeq") Long newsfeedSeq, @AuthenticationPrincipal UserDetailsImpl userDetails){
         newsfeedService.deleteNewsFeed(newsfeedSeq,userDetails.getUser());
-        return ResponseEntity.ok().body("성공적으로 뉴스피드 삭제 성공");
+        return ResponseEntity.noContent().build();
     }
 
 }

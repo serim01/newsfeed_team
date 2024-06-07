@@ -45,8 +45,16 @@ public class CommentService {
     }
 
     public List<CommentResponseDto> findAll(long newsfeedSeq) {
+        // DB에 존재하는 Newsfeed
+        Newsfeed newsfeed = newsfeedService.findNewsfeed(newsfeedSeq);
+
         // DB에 존재하는 comment list
         List<Comment> commentList = commentRepository.findByNewsfeedNewsFeedSeq(newsfeedSeq);
+
+        // 댓글이 없는 경우 예외 처리
+        if (commentList.isEmpty()) {
+            throw new CustomException(ErrorCode.COMMENT_NOT_FOUND);
+        }
 
         return commentList.stream()
                 .map(CommentResponseDto::new)
@@ -80,7 +88,6 @@ public class CommentService {
     public void deleteComment(
             long newsfeedSeq,
             long commentSeq,
-            CommentRequestDto requestDto,
             User user) {
 
         // DB에 존재하는 Newsfeed

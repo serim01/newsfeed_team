@@ -17,6 +17,6 @@ public class UserInfoUpdateDto {
 
     public UserInfoUpdateDto(User user) {
         this.name = user.getUserName();
-        this.intro = user.getUserEmail();
+        this.intro = user.getUserIntro();
     }
 }
