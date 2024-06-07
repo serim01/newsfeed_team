@@ -1,6 +1,7 @@
 package com.sparta.newspeed.security.service;
 
 import com.sparta.newspeed.user.entity.User;
+import com.sparta.newspeed.user.entity.UserRoleEnum;
 import com.sparta.newspeed.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,7 +17,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
-        User user = userRepository.findByUserId(userId).orElseThrow(() ->
+        User user = userRepository.findByUserIdAndRole(userId, UserRoleEnum.USER).orElseThrow(() ->
                 new UsernameNotFoundException("Not Found " + userId));
 
         return new UserDetailsImpl(user);

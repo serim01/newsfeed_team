@@ -1,9 +1,6 @@
 package com.sparta.newspeed.auth.controller;
 
-import com.sparta.newspeed.auth.dto.LoginRequestDto;
-import com.sparta.newspeed.auth.dto.SignUpRequestDto;
-import com.sparta.newspeed.auth.dto.SignupResponseDto;
-import com.sparta.newspeed.auth.dto.TokenDto;
+import com.sparta.newspeed.auth.dto.*;
 import com.sparta.newspeed.auth.service.AuthService;
 import com.sparta.newspeed.security.service.UserDetailsImpl;
 import com.sparta.newspeed.security.util.JwtUtil;
@@ -29,11 +26,12 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    public String login(@RequestBody LoginRequestDto requestDto, HttpServletResponse response) {
-        TokenDto token = authService.login(requestDto, response);
+    public ResponseEntity<TokenResponseDto> login(@RequestBody LoginRequestDto requestDto, HttpServletResponse response) {
+        TokenResponseDto token = authService.login(requestDto);
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, token.getAccessToken());
-        response.addHeader(JwtUtil.AUTHORIZATION_HEADER + "refresh", token.getRefreshToken());
-        return "로그인 성공" + response.getStatus();
+//        response.addHeader(JwtUtil.AUTHORIZATION_HEADER + "refresh", token.getRefreshToken());
+//        return "로그인 성공" + response.getStatus();
+        return ResponseEntity.ok().body(token);
     }
 
     @Operation(summary = "회원가입",description = "회원가입")
@@ -42,16 +40,17 @@ public class AuthController {
         return authService.signup(requestDto);
     }
     @PostMapping("/reauth")
-    public String reAuth(@RequestBody HashMap<String, String> bodyJson, HttpServletResponse response) {
-        String refreshtoken = bodyJson.get("refreshToken");
-        String newAccessToken = authService.reAuth(refreshtoken);
-        response.setHeader(JwtUtil.AUTHORIZATION_HEADER, newAccessToken);
+    public ResponseEntity<TokenResponseDto> reAuth(@RequestBody TokenRequestDto requestDto, HttpServletResponse response) {
+        String refreshtoken = requestDto.getRefreshToken();
+        TokenResponseDto newToken = authService.reAuth(refreshtoken);
+        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, newToken.getAccessToken());
 
-        return "토큰 갱신 성공" + response.getStatus();
+        return ResponseEntity.ok().body(newToken);
     }
-    @DeleteMapping("/logout")
+    @PostMapping("/logout")
     public String logout(@AuthenticationPrincipal UserDetailsImpl userDetails, HttpServletRequest request, HttpServletResponse response) {
         request.removeAttribute(JwtUtil.AUTHORIZATION_HEADER);
+        authService.logout(userDetails.getUser());
         return "로그아웃 성공" + response.getStatus();
     }
 }

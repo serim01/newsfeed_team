@@ -1,9 +1,6 @@
 package com.sparta.newspeed.auth.service;
 
-import com.sparta.newspeed.auth.dto.LoginRequestDto;
-import com.sparta.newspeed.auth.dto.SignUpRequestDto;
-import com.sparta.newspeed.auth.dto.SignupResponseDto;
-import com.sparta.newspeed.auth.dto.TokenDto;
+import com.sparta.newspeed.auth.dto.*;
 import com.sparta.newspeed.common.exception.CustomException;
 import com.sparta.newspeed.common.exception.ErrorCode;
 import com.sparta.newspeed.security.util.JwtUtil;
@@ -55,38 +52,42 @@ public class AuthService {
     }
 
     @Transactional
-    public TokenDto login(LoginRequestDto requestDto, HttpServletResponse response) {
+    public TokenResponseDto login(LoginRequestDto requestDto) {
         String userId = requestDto.getUserId();
         String password = requestDto.getPassword();
 
         User user = userRepository.findByUserId(userId).orElseThrow(
-                () -> new IllegalArgumentException("등록된 사용자가 없습니다.")
+                () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
 
         if((!passwordEncoder.matches(password, user.getUserPassword()))) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+            throw new CustomException(ErrorCode.INCORRECT_PASSWORD);
         }
         if(user.getRole().equals(UserRoleEnum.WITHDRAW)) {
             throw new CustomException(ErrorCode.USER_NOT_VALID);
         }
-        TokenDto token = jwtUtil.createToken(userId, UserRoleEnum.USER);
+        TokenResponseDto token = jwtUtil.createToken(userId, UserRoleEnum.USER);
         user.setRefreshToken(token.getRefreshToken());
         userRepository.save(user);
-        return jwtUtil.createToken(userId, UserRoleEnum.USER);
+        return token;
     }
-
-    public String reAuth(String refreshtoken) {
+    @Transactional
+    public void logout(User user) {
+        user.setRefreshToken(null);
+        userRepository.save(user);
+    }
+    public TokenResponseDto reAuth(String refreshtoken) {
         String subToken = jwtUtil.substringToken(refreshtoken);
         User user = userRepository.findByRefreshToken(refreshtoken).orElseThrow(
-                () -> new IllegalArgumentException("등록된 사용자가 없습니다.")
+                () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
         if(!jwtUtil.validateRefreshToken(subToken)) {
-            throw new IllegalArgumentException("토큰이 만료되었습니다.");
+            throw new CustomException(ErrorCode.TOKEN_EXPIRED);
         }
         if(jwtUtil.substringToken(refreshtoken).equals(user.getRefreshToken())) {
-            throw new IllegalArgumentException("토큰이 일치하지 않습니다.");
+            throw new CustomException(ErrorCode.TOKEN_NOT_FOUND);
         }
         String userId = jwtUtil.getUserInfoFromToken(subToken).getSubject();
-        return jwtUtil.createToken(userId, UserRoleEnum.USER).getAccessToken();
+        return jwtUtil.createToken(userId, UserRoleEnum.USER);
     }
 }

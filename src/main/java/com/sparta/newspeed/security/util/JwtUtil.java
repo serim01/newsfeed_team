@@ -1,20 +1,17 @@
 package com.sparta.newspeed.security.util;
 
-import com.sparta.newspeed.auth.dto.TokenDto;
+import com.sparta.newspeed.auth.dto.TokenResponseDto;
 import com.sparta.newspeed.user.entity.UserRoleEnum;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
@@ -28,8 +25,8 @@ public class JwtUtil {
     // Token 식별자
     public static final String BEARER_PREFIX = "Bearer ";
     // 토큰 만료시간
-    private final long ACCESSTOKEN_TIME = 60 * 60 * 1000L; // 60분
-    private final long REFRESHTOKEN_TIME = 60 * 60 * 1000L * 72; // 720시간(3일)
+    private final long ACCESSTOKEN_TIME = 60 * 30 * 1000L; // 30분
+    private final long REFRESHTOKEN_TIME = 60 * 60 * 1000L * 336; // 336시간(2주)
 
     @Value("${jwt.secret.key}") // Base64 Encode 한 SecretKey
     private String secretKey;
@@ -46,7 +43,7 @@ public class JwtUtil {
     }
 
     // 토큰 생성
-    public TokenDto createToken(String userId, UserRoleEnum role) {
+    public TokenResponseDto createToken(String userId, UserRoleEnum role) {
         Date date = new Date();
 
         String accessToken = BEARER_PREFIX +
@@ -66,7 +63,7 @@ public class JwtUtil {
                         .signWith(key, signatureAlgorithm) // 암호화 알고리즘
                         .compact();
 
-        return TokenDto.builder().accessToken(accessToken).refreshToken(refreshToken).key(userId).build();
+        return TokenResponseDto.builder().accessToken(accessToken).refreshToken(refreshToken).key(userId).build();
     }
 
     // header 에서 JWT 가져오기
