@@ -43,9 +43,9 @@ public class UserController {
 
     @Operation(summary = "회원탈퇴", description = "회원의 상태를 변경")
     @PostMapping("/withdraw")
-    public ResponseEntity<String> Withdraw(@AuthenticationPrincipal UserDetailsImpl userDetails,
+    public ResponseEntity<String> updateWithdraw(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                            @RequestBody @Valid UserStatusDto requestDto){
-        userService.Withdraw(userDetails.getUser().getUserSeq(), requestDto);
+        userService.updateWithdraw(userDetails.getUser().getUserSeq(), requestDto);
         return ResponseEntity.ok("Update user withdraw");
     }
 }
