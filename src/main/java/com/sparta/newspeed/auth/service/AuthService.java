@@ -76,6 +76,7 @@ public class AuthService {
         user.setRefreshToken(null);
         userRepository.save(user);
     }
+    @Transactional
     public TokenResponseDto reAuth(String refreshtoken) {
         String subToken = jwtUtil.substringToken(refreshtoken);
         User user = userRepository.findByRefreshToken(refreshtoken).orElseThrow(
@@ -88,6 +89,9 @@ public class AuthService {
             throw new CustomException(ErrorCode.TOKEN_NOT_FOUND);
         }
         String userId = jwtUtil.getUserInfoFromToken(subToken).getSubject();
+        TokenResponseDto token = jwtUtil.createToken(userId, UserRoleEnum.USER);
+        user.setRefreshToken(token.getRefreshToken());
+        userRepository.save(user);
         return jwtUtil.createToken(userId, UserRoleEnum.USER);
     }
 }
