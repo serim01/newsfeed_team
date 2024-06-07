@@ -5,7 +5,6 @@ import com.sparta.newspeed.user.dto.UserInfoUpdateDto;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -65,7 +64,7 @@ public class User extends Timestamped {
         this.userIntro = requestDto.getIntro();
     }
 
-    public void setUserPassword(String encNewPassword) {
+    public void updatePassword(String encNewPassword) {
         this.userPassword = encNewPassword;
     }
 
