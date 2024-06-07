@@ -54,7 +54,7 @@ public class UserService {
     }
 
     @Transactional
-    public void Withdraw(Long userSeq, UserStatusDto requestDto) {
+    public void updateWithdraw(Long userSeq, UserStatusDto requestDto) {
         User user = findById(userSeq);
 
         // ID가 일치하지 않을 경우
@@ -71,7 +71,7 @@ public class UserService {
         }
 
         // 회원 상태를 탈퇴로 변경
-        user.UpdateRole(UserRoleEnum.WITHDRAW);
+        user.updateRole(UserRoleEnum.WITHDRAW);
     }
 
 }

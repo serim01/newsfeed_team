@@ -69,7 +69,7 @@ public class User extends Timestamped {
         this.userPassword = encNewPassword;
     }
 
-    public void UpdateRole(UserRoleEnum role){
+    public void updateRole(UserRoleEnum role){
         this.role = role;
     }
 }
