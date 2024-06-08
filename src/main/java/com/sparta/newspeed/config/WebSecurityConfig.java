@@ -1,10 +1,14 @@
 package com.sparta.newspeed.config;
 
+import com.sparta.newspeed.auth.service.AuthService;
+import com.sparta.newspeed.auth.service.CustomOAuth2UserService;
+import com.sparta.newspeed.oauth2.OAuth2SuccessHandler;
 import com.sparta.newspeed.security.AccessDeniedHandler;
 import com.sparta.newspeed.security.AuthenticationEntryPoint;
 import com.sparta.newspeed.security.filter.JwtAuthorizationFilter;
 import com.sparta.newspeed.security.service.UserDetailsServiceImpl;
 import com.sparta.newspeed.security.util.JwtUtil;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -20,20 +24,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint;
 
 @Configuration
 @EnableWebSecurity // Spring Security 지원을 가능하게 함
+@RequiredArgsConstructor
 public class WebSecurityConfig {
     private final JwtUtil jwtUtil;
     private final UserDetailsServiceImpl userDetailsService;
     private final AuthenticationConfiguration authenticationConfiguration;
-
-    public WebSecurityConfig(JwtUtil jwtUtil, UserDetailsServiceImpl userDetailsService, AuthenticationConfiguration authenticationConfiguration) {
-        this.jwtUtil = jwtUtil;
-        this.userDetailsService = userDetailsService;
-        this.authenticationConfiguration = authenticationConfiguration;
-    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -50,7 +48,7 @@ public class WebSecurityConfig {
         return new JwtAuthorizationFilter(jwtUtil, userDetailsService);
     }
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, CustomOAuth2UserService customOAuth2UserService, AuthService authService) throws Exception {
         // CSRF 설정
         http.csrf((csrf) -> csrf.disable());
 
@@ -71,6 +69,13 @@ public class WebSecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/newsfeeds/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/api-docs/**", "/swagger-resources/**").permitAll()
                         .anyRequest().authenticated() // 그 외 모든 요청 인증처리
+        );
+
+        http.oauth2Login(oauth2 -> oauth2
+                .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig
+                        .userService(customOAuth2UserService))
+                .successHandler(new OAuth2SuccessHandler(jwtUtil, authService))
+
         );
         // 로그인폼 사용 X
         http.formLogin((formLogin) -> formLogin.disable());

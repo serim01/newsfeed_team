@@ -9,6 +9,7 @@ import com.sparta.newspeed.user.entity.UserRoleEnum;
 import com.sparta.newspeed.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.antlr.v4.runtime.Token;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -76,7 +77,7 @@ public class AuthService {
         user.setRefreshToken(null);
         userRepository.save(user);
     }
-    @Transactional
+
     public TokenResponseDto reAuth(String refreshtoken) {
         String subToken = jwtUtil.substringToken(refreshtoken);
         User user = userRepository.findByRefreshToken(refreshtoken).orElseThrow(
@@ -90,8 +91,18 @@ public class AuthService {
         }
         String userId = jwtUtil.getUserInfoFromToken(subToken).getSubject();
         TokenResponseDto token = jwtUtil.createToken(userId, UserRoleEnum.USER);
-        user.setRefreshToken(token.getRefreshToken());
-        userRepository.save(user);
+        updateRefreshToken(user, token.getRefreshToken());
         return jwtUtil.createToken(userId, UserRoleEnum.USER);
+    }
+
+    /**
+     * 리프레시 토큰을 저장한다.
+     *
+     * @param user 유저 정보
+     * @param refreshToken 저장할 리프레시 토큰
+     */
+    public void updateRefreshToken(User user, String refreshToken) {
+        user.setRefreshToken(refreshToken);
+        userRepository.save(user);
     }
 }
