@@ -16,11 +16,16 @@ public class UserResponseDto {
     private String intro;
     @Schema(description = "이메일")
     private String email;
+    @Schema(description = "프로필 사진 URL")
+    private String photoUrl;
 
     public UserResponseDto(User user) {
         this.id = user.getUserId();
         this.name = user.getUserName();
         this.intro = user.getUserIntro();
         this.email = user.getUserEmail();
+    }
+    public void setPhotoUrl(String photoUrl) {
+        this.photoUrl = photoUrl;
     }
 }

@@ -36,3 +36,13 @@ jwt:
   secret:
     key: "036c4fe3ec667532545b9e8fa7e2a98a22f439dff102623c097715060e2da68c"
   expiry-millis: 300000 # 5?
+
+cloud:
+  aws:
+    s3:
+      bucket: "spartanewsfeed"
+    stack.auto: false
+    region.static: "ap-northeast-2"
+    credentials:
+      accessKey: "AKIAYS2NVGZSEWGRWCME"
+      secretKey: "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"

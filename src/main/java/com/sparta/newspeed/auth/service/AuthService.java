@@ -1,18 +1,25 @@
 package com.sparta.newspeed.auth.service;
 
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.sparta.newspeed.auth.dto.*;
+import com.sparta.newspeed.awss3.S3Service;
 import com.sparta.newspeed.common.exception.CustomException;
 import com.sparta.newspeed.common.exception.ErrorCode;
 import com.sparta.newspeed.security.util.JwtUtil;
 import com.sparta.newspeed.user.entity.User;
 import com.sparta.newspeed.user.entity.UserRoleEnum;
 import com.sparta.newspeed.user.repository.UserRepository;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Optional;
 
 @Service
@@ -21,8 +28,9 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final S3Service s3Service;
 
-    public SignupResponseDto signup(SignUpRequestDto request) {
+    public SignupResponseDto signup(SignUpRequestDto request, MultipartFile file) {
         String userId = request.getUserId();
         String userName = request.getUserName();
         String password = passwordEncoder.encode(request.getPassword());
@@ -36,6 +44,10 @@ public class AuthService {
 
         // 사용자 ROLE 확인
         UserRoleEnum role = UserRoleEnum.USER;
+        String fileName = null;
+        if (file != null) {
+            fileName = s3Service.uploadFile(file);
+        }
 
         // 사용자 등록
         User user = User.builder()
@@ -44,6 +56,7 @@ public class AuthService {
                 .userPassword(password)
                 .userEmail(email)
                 .role(role)
+                .photoName(fileName)
                 .build();
 
         userRepository.save(user);
