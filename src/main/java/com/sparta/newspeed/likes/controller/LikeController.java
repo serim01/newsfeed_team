@@ -33,18 +33,15 @@ public class LikeController {
         return new LikeCountResponseDto(likeService.getLikesCount(commentsId, LikeEnum.COMMENT));
     }
 
-    // 게시물별 좋아요 추가 및 삭제 (토글)
     @Operation(summary = "toggleNewsfeedLike", description = "게시물 좋아요 추가 및 삭제 기능입니다.")
     @PostMapping("/{newsfeedId}/like")
     public ResponseEntity<String> toggleNewsfeedLike(@PathVariable(name = "newsfeedId") long newsfeedId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return likeService.toggleLike(userDetails.getUser().getUserSeq(), newsfeedId, LikeEnum.NEWSFEED);
+        return likeService.toggleNewsfeedLike(userDetails.getUser().getUserSeq(), newsfeedId);
     }
 
-    // 댓글별 좋아요 추가 및 삭제 (토글)
     @Operation(summary = "toggleCommentLike", description = "댓글 좋아요 추가 및 삭제 기능입니다.")
     @PostMapping("/{newsfeedId}/comments/{commentId}/like")
-    public ResponseEntity<String> toggleCommentLike(@PathVariable(name = "newsfeedId") long newsfeedId, @PathVariable(name = "commentId") long commentId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return likeService.toggleLike(userDetails.getUser().getUserSeq(), commentId, LikeEnum.COMMENT);
+    public ResponseEntity<String> toggleCommentLike(@PathVariable(name = "commentId") long commentId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return likeService.toggleCommentLike(userDetails.getUser().getUserSeq(), commentId);
     }
-
 }

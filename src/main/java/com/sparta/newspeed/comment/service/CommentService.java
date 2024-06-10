@@ -36,6 +36,7 @@ public class CommentService {
                 .content(requestDto.getContent())
                 .user(user)
                 .newsfeed(newsfeed)
+                .like(0L)
                 .build();
 
         // DB에 저장
@@ -105,9 +106,30 @@ public class CommentService {
         commentRepository.delete(comment);
     }
 
+    // 좋아요 증감 함수
+    @Transactional
+    public void increaseCommentLike(Long commentSeq){
+        Comment comment = findComment(commentSeq);
+        comment.increaseLike();
+    }
+
+    @Transactional
+    public void decreaseCommentLike(Long commentSeq){
+        Comment comment =  findComment(commentSeq);
+        comment.decreaseLike();
+    }
+
     private Comment findComment(Long id) {
         return commentRepository.findById(id).orElseThrow(() ->
                 new CustomException(ErrorCode.COMMENT_NOT_FOUND)
         );
+    }
+
+    public void validateCommentLike(Long userId, Long commentSeq) {
+        Comment comment = commentRepository.findById(commentSeq).orElseThrow(() ->
+                new CustomException(ErrorCode.COMMENT_NOT_FOUND));
+        if (comment.getUser().getUserSeq().equals(userId)) {
+            throw new CustomException(ErrorCode.COMMENT_SAME_USER);
+        }
     }
 }
