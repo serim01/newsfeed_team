@@ -20,6 +20,17 @@ spring:
       enabled: true
       settings:
         web-allow-others: true
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    protocol: smtp
+    default-encoding: UTF-8
+    username: ${spring.mail.username}
+    password: ${spring.mail.password}
+  data:
+    redis:
+      host: localhost
+      port: 6379
 server:
   port: 8081
 
@@ -34,5 +45,5 @@ logging:
 
 jwt:
   secret:
-    key: "036c4fe3ec667532545b9e8fa7e2a98a22f439dff102623c097715060e2da68c"
+    key: ${jwt.secret}
   expiry-millis: 300000 # 5?
