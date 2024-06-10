@@ -28,6 +28,9 @@ public class Comment extends Timestamped {
     @Column(name = "content")
     private String content;
 
+    @Column(name = "likes")
+    private Long like;
+
     @ManyToOne
     @JoinColumn(name = "user_seq")
     private User user;
@@ -39,4 +42,8 @@ public class Comment extends Timestamped {
     public void update(CommentRequestDto requestDto) {
         this.content = requestDto.getContent();
     }
+
+    public void increaseLike() { this.like++; }
+
+    public void decreaseLike() { this.like--; }
 }

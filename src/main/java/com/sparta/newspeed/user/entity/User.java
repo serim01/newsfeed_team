@@ -43,6 +43,9 @@ public class User extends Timestamped {
     @Column(name = "user_status")
     private String userStatus;
 
+    @Column(name = "profile_image_url")
+    private String profileImageUrl;
+
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private UserRoleEnum role;
@@ -65,6 +68,12 @@ public class User extends Timestamped {
     public void updateUserInfo(UserInfoUpdateDto requestDto) {
         this.userName = requestDto.getName();
         this.userIntro = requestDto.getIntro();
+    }
+
+    public User updateOAuth2Info(String userName, String profileImageUrl) {
+        this.userName = userName;
+        this.profileImageUrl = profileImageUrl;
+        return this;
     }
 
     public void updatePassword(String encNewPassword) {
