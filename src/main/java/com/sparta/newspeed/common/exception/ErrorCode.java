@@ -8,6 +8,8 @@ import lombok.Getter;
 public enum ErrorCode {
     FAIL(500, "실패했습니다."),
     USER_NOT_FOUND(400, "해당하는 유저를 찾을 수 없습니다."),
+    SOCIAL_TOKEN_GET_FAILED(500, "해당하는 소셜 유저 토큰을 가져오는데 실패했습니다."),
+    SOCIAL_USER_NOT_FOUND(400, "해당하는 소셜 유저 데이터를 가져오는데 실패했습니다."),
     USER_NOT_VALID(400, "이미 탈퇴 처리된 유저입니다."),
     DUPLICATE_PASSWORD(400, "기존 비밀번호와 동일한 비밀번호입니다."),
     USER_NOT_UNIQUE(400,"중복된 사용자가 존재합니다."),
