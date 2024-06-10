@@ -4,6 +4,7 @@ import com.sparta.newspeed.auth.dto.LoginRequestDto;
 import com.sparta.newspeed.auth.dto.SignUpRequestDto;
 import com.sparta.newspeed.auth.dto.SignupResponseDto;
 import com.sparta.newspeed.auth.dto.TokenResponseDto;
+import com.sparta.newspeed.auth.social.OAuthAttributes;
 import com.sparta.newspeed.common.exception.CustomException;
 import com.sparta.newspeed.common.exception.ErrorCode;
 import com.sparta.newspeed.common.util.RedisUtil;
@@ -122,11 +123,41 @@ public class AuthService {
             throw new CustomException(ErrorCode.TOKEN_NOT_FOUND);
         }
         String userId = jwtUtil.getUserInfoFromToken(subToken).getSubject();
-        TokenResponseDto token = jwtUtil.createToken(userId, UserRoleEnum.USER);
-        user.setRefreshToken(token.getRefreshToken());
-        userRepository.save(user);
+        TokenResponseDto token = createToken(userId, UserRoleEnum.USER);
+        updateRefreshToken(user, token.getRefreshToken());
         return jwtUtil.createToken(userId, UserRoleEnum.USER);
     }
+
+    /**
+     * 리프레시 토큰을 저장한다.
+     *
+     * @param user 유저 정보
+     * @param refreshToken 저장할 리프레시 토큰
+     */
+    public void updateRefreshToken(User user, String refreshToken) {
+        user.setRefreshToken(refreshToken);
+        userRepository.save(user);
+    }
+
+    /**
+     * 존재하는 회원이라면 이름과 프로필 이미지 업데이트
+     * 처음 가입하는 회원이라면 User 데이터 생성
+     *
+     * @param attributes 소셜 정보
+     * @return 업데이트 & 생성된 User 데이터
+     */
+    public User saveOrUpdateOAuth2Info(OAuthAttributes attributes) {
+        User user = userRepository.findByUserId(attributes.getEmail())
+                .map(entity -> entity.updateOAuth2Info(attributes.getName(), attributes.getProfileImageUrl()))
+                .orElse(attributes.toEntity());
+
+        return userRepository.save(user);
+    }
+
+    public TokenResponseDto createToken(String userId, UserRoleEnum role) {
+        return jwtUtil.createToken(userId, role);
+    }
+
 
     public void joinEmail(String email) {
         makeRandomNumber();
