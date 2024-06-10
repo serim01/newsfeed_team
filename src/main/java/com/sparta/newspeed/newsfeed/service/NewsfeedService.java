@@ -74,6 +74,7 @@ public class NewsfeedService {
                 .remainMember(request.getRemainMember())
                 .user(user)
                 .ott(ott)
+                .like(0L)
                 .build();
 
         Newsfeed saveNewsfeed = newsfeedRespository.save(newsfeed);
@@ -107,11 +108,33 @@ public class NewsfeedService {
         }
     }
 
+    // 좋아요 증감 함수
+    @Transactional
+    public void increaseNewsfeedLike(Long newsfeedSeq){
+        Newsfeed newsfeed = findNewsfeed(newsfeedSeq);
+        newsfeed.increaseLike();
+    }
+
+    @Transactional
+    public void decreaseNewsfeedLike(Long newsfeedSeq){
+        Newsfeed newsfeed = findNewsfeed(newsfeedSeq);
+        newsfeed.decreaseLike();
+    }
+
     //조회는 id 값만 존재하다면 user 상관없이 조회되어야함.
     public Newsfeed findNewsfeed(Long newsfeedSeq) {
         return newsfeedRespository.findById(newsfeedSeq)
                 .orElseThrow(() -> new CustomException(ErrorCode.NEWSFEED_NOT_FOUND));
 
+    }
+
+    // 좋아요 유효성 검사
+    public void validateNewsfeedLike(Long userId, Long newsfeedSeq) {
+        Newsfeed newsfeed = newsfeedRespository.findById(newsfeedSeq).orElseThrow(() ->
+                new CustomException(ErrorCode.NEWSFEED_NOT_FOUND));
+        if (newsfeed.getUser().getUserSeq().equals(userId)) {
+            throw new CustomException(ErrorCode.NEWSFEED_SAME_USER);
+        }
     }
 
     //삭제, 수정에 필요한 newsfeed 가져오는 메서드
@@ -127,6 +150,7 @@ public class NewsfeedService {
         return ottRepository.findByOttName(request.getOttName()).
                 orElseThrow(()-> new CustomException(ErrorCode.OTT_NOT_FOUND));
     }
+
 
     private boolean isRemainMembersValid(Ott ott, int remainMembers) {
         return remainMembers <= ott.getMaxMember();
