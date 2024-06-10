@@ -101,8 +101,8 @@ public class NewsfeedService {
 
     // 좋아요 많은 순 또는 생성일자 기준 최신순 선택
     private Sort getSortBy(String sortBy) {
-        if ("likes".equals(sortBy)) {
-            return Sort.by("likes").descending();
+        if ("like".equals(sortBy)) {
+            return Sort.by("like").descending();
         } else {
             return Sort.by("createdAt").descending();
         }
