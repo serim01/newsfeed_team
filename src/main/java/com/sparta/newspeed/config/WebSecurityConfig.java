@@ -1,8 +1,8 @@
 package com.sparta.newspeed.config;
 
 import com.sparta.newspeed.auth.service.AuthService;
-import com.sparta.newspeed.auth.service.CustomOAuth2UserService;
-import com.sparta.newspeed.oauth2.OAuth2SuccessHandler;
+import com.sparta.newspeed.security.oauth2.CustomOAuth2UserService;
+import com.sparta.newspeed.security.oauth2.OAuth2SuccessHandler;
 import com.sparta.newspeed.security.AccessDeniedHandler;
 import com.sparta.newspeed.security.AuthenticationEntryPoint;
 import com.sparta.newspeed.security.filter.JwtAuthorizationFilter;
@@ -65,7 +65,7 @@ public class WebSecurityConfig {
         http.authorizeHttpRequests((authorizeHttpRequests) ->
                 authorizeHttpRequests
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/auth/**", "/api/social/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/newsfeeds/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/api-docs/**", "/swagger-resources/**").permitAll()
                         .anyRequest().authenticated() // 그 외 모든 요청 인증처리

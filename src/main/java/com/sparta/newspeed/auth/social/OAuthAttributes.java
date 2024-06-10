@@ -1,4 +1,4 @@
-package com.sparta.newspeed.oauth2;
+package com.sparta.newspeed.auth.social;
 
 import com.sparta.newspeed.user.entity.User;
 import com.sparta.newspeed.user.entity.UserRoleEnum;
@@ -85,10 +85,10 @@ public class OAuthAttributes {
     public User toEntity() {
         return User.builder()
                 .userId(email)
-                .userPassword("OAUTH2")
+                .userPassword("social")
                 .userName(name)
                 .userEmail(email)
-                .role(UserRoleEnum.USER)
+                .role(UserRoleEnum.SOCIAL)
                 .build();
     }
 }

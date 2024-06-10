@@ -1,9 +1,10 @@
-package com.sparta.newspeed.auth.service;
+package com.sparta.newspeed.security.oauth2;
 
-import com.sparta.newspeed.oauth2.OAuth2CustomUser;
-import com.sparta.newspeed.oauth2.OAuthAttributes;
+import com.sparta.newspeed.auth.service.AuthService;
+import com.sparta.newspeed.auth.social.OAuthAttributes;
 import com.sparta.newspeed.user.entity.User;
 import com.sparta.newspeed.user.repository.UserRepository;
+import com.sparta.newspeed.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -17,7 +18,7 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
-    private final UserRepository userRepository;
+    private final AuthService authService;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -48,10 +49,6 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
      * @return 업데이트 & 생성된 User 데이터
      */
     private User saveOrUpdate(OAuthAttributes attributes) {
-        User user = userRepository.findByUserId(attributes.getEmail())
-                .map(entity -> entity.updateOAuth2Info(attributes.getName(), attributes.getProfileImageUrl()))
-                .orElse(attributes.toEntity());
-
-        return userRepository.save(user);
+        return authService.saveOrUpdateOAuth2Info(attributes);
     }
 }

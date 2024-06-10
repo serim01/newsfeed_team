@@ -1,6 +1,7 @@
 package com.sparta.newspeed.auth.service;
 
 import com.sparta.newspeed.auth.dto.*;
+import com.sparta.newspeed.auth.social.OAuthAttributes;
 import com.sparta.newspeed.common.exception.CustomException;
 import com.sparta.newspeed.common.exception.ErrorCode;
 import com.sparta.newspeed.security.util.JwtUtil;
@@ -90,7 +91,7 @@ public class AuthService {
             throw new CustomException(ErrorCode.TOKEN_NOT_FOUND);
         }
         String userId = jwtUtil.getUserInfoFromToken(subToken).getSubject();
-        TokenResponseDto token = jwtUtil.createToken(userId, UserRoleEnum.USER);
+        TokenResponseDto token = createToken(userId, UserRoleEnum.USER);
         updateRefreshToken(user, token.getRefreshToken());
         return jwtUtil.createToken(userId, UserRoleEnum.USER);
     }
@@ -105,4 +106,24 @@ public class AuthService {
         user.setRefreshToken(refreshToken);
         userRepository.save(user);
     }
+
+    /**
+     * 존재하는 회원이라면 이름과 프로필 이미지 업데이트
+     * 처음 가입하는 회원이라면 User 데이터 생성
+     *
+     * @param attributes 소셜 정보
+     * @return 업데이트 & 생성된 User 데이터
+     */
+    public User saveOrUpdateOAuth2Info(OAuthAttributes attributes) {
+        User user = userRepository.findByUserId(attributes.getEmail())
+                .map(entity -> entity.updateOAuth2Info(attributes.getName(), attributes.getProfileImageUrl()))
+                .orElse(attributes.toEntity());
+
+        return userRepository.save(user);
+    }
+
+    public TokenResponseDto createToken(String userId, UserRoleEnum role) {
+        return jwtUtil.createToken(userId, role);
+    }
+
 }

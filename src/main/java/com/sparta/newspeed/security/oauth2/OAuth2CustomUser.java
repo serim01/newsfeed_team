@@ -1,4 +1,4 @@
-package com.sparta.newspeed.oauth2;
+package com.sparta.newspeed.security.oauth2;
 
 import com.sparta.newspeed.user.entity.User;
 import lombok.Builder;

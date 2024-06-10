@@ -1,4 +1,4 @@
-package com.sparta.newspeed.oauth2;
+package com.sparta.newspeed.security.oauth2;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.newspeed.auth.dto.TokenResponseDto;
