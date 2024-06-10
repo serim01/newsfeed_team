@@ -1,13 +1,17 @@
 package com.sparta.newspeed.user.entity;
 
 import com.sparta.newspeed.common.Timestamped;
+import com.sparta.newspeed.user.dto.UserInfoUpdateDto;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Getter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
 @Entity
 @Getter
 @Table(name = "users")
@@ -28,6 +32,7 @@ public class User extends Timestamped {
     @Column(name = "user_name")
     private String userName;
 
+    @NotBlank
     @Email
     @Column(name = "user_email")
     private String userEmail;
@@ -47,4 +52,27 @@ public class User extends Timestamped {
 
     @Column(name = "status_modified")
     private LocalDateTime statusModified;
+
+    public User(String userId, String userPassword, UserRoleEnum role) {
+        this.userId = userId;
+        this.userPassword = userPassword;
+        this.role = role;
+    }
+
+    public void updateUserInfo(UserInfoUpdateDto requestDto) {
+        this.userName = requestDto.getName();
+        this.userIntro = requestDto.getIntro();
+    }
+
+    public void updatePassword(String encNewPassword) {
+        this.userPassword = encNewPassword;
+    }
+
+    public void updateRole(UserRoleEnum role){
+        this.role = role;
+    }
+
+    public void setRefreshToken(String token) {
+        this.refreshToken = token;
+    }
 }

@@ -2,9 +2,9 @@ spring:
   application:
     name: "newsfeed"
   datasource:
-    url: "jdbc:h2:~/newsfeed/newsfeed"
-    username: ${DB_USER}
-    password: ${DB_PASSWORD}
+    url: "jdbc:h2:~/newsfeed/newsfeed_test"
+    username: sa
+    password: 1234
     driver-class-name: org.h2.Driver
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
