@@ -5,6 +5,7 @@ import com.sparta.newspeed.auth.dto.SignUpRequestDto;
 import com.sparta.newspeed.auth.dto.SignupResponseDto;
 import com.sparta.newspeed.auth.dto.TokenResponseDto;
 import com.sparta.newspeed.auth.social.OAuthAttributes;
+import com.sparta.newspeed.awss3.S3Service;
 import com.sparta.newspeed.common.exception.CustomException;
 import com.sparta.newspeed.common.exception.ErrorCode;
 import com.sparta.newspeed.common.util.RedisUtil;
@@ -20,6 +21,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
 import java.util.Random;
@@ -31,11 +33,12 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JavaMailSender mailSender;
     private final JwtUtil jwtUtil;
+    private final S3Service s3Service;
     private final RedisUtil redisUtil;
     private int authNumber;
 
 
-    public SignupResponseDto signup(SignUpRequestDto request) {
+    public SignupResponseDto signup(SignUpRequestDto request, MultipartFile file) {
         String userId = request.getUserId();
         String userName = request.getUserName();
         String password = passwordEncoder.encode(request.getPassword());
@@ -55,6 +58,10 @@ public class AuthService {
 
         // 사용자 ROLE 확인
         UserRoleEnum role = UserRoleEnum.UNCHECKED; // 아직 이메일 체크 안함.
+        String fileName = null;
+        if (file != null) {
+            fileName = s3Service.uploadFile(file);
+        }
 
         // 사용자 등록
         User user = User.builder()
@@ -63,6 +70,7 @@ public class AuthService {
                 .userPassword(password)
                 .userEmail(email)
                 .role(role)
+                .photoName(fileName)
                 .build();
 
         userRepository.save(user);

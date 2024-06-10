@@ -56,6 +56,9 @@ public class User extends Timestamped {
     @Column(name = "status_modified")
     private LocalDateTime statusModified;
 
+    @Column(name = "photo_name")
+    private String photoName;
+
     public User(String userId, String userPassword, UserRoleEnum role) {
         this.userId = userId;
         this.userPassword = userPassword;
@@ -83,5 +86,9 @@ public class User extends Timestamped {
 
     public void setRefreshToken(String token) {
         this.refreshToken = token;
+    }
+
+    public void setPhotoName(String photoName) {
+        this.photoName = photoName;
     }
 }

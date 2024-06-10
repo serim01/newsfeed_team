@@ -11,9 +11,11 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name = "User API", description = "User API 입니다")
 @RestController
@@ -30,10 +32,11 @@ public class UserController {
         return userService.getUser(userDetails.getUser().getUserSeq());
     }
 
-    @PutMapping
+    @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public UserInfoUpdateDto updateUser(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                        @RequestBody UserInfoUpdateDto requestDto) {
-        return userService.updateUser(userDetails.getUser().getUserSeq(), requestDto);
+                                        @RequestPart UserInfoUpdateDto requestDto,
+                                        @RequestPart(required = false) MultipartFile file) {
+        return userService.updateUser(userDetails.getUser().getUserSeq(), requestDto, file);
     }
 
     @PutMapping("/password")

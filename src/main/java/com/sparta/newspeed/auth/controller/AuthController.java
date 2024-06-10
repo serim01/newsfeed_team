@@ -12,12 +12,11 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 
 @Tag(name = "인증 API",description = "인증 API")
@@ -38,9 +37,10 @@ public class AuthController {
     }
 
     @Operation(summary = "회원가입",description = "회원가입")
-    @PostMapping("/signup")
-    public SignupResponseDto Signup(@RequestBody @Valid SignUpRequestDto requestDto){
-        return authService.signup(requestDto);
+    @PostMapping(value = "/signup", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public SignupResponseDto Signup(@RequestPart @Valid SignUpRequestDto requestDto,
+                                    @RequestPart(required = false)MultipartFile file){
+        return authService.signup(requestDto, file);
     }
 
     @Operation(summary = "mailCheck",description = "이메일 인증 api 입니다.")
