@@ -18,9 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -37,12 +35,18 @@ public class NewsfeedService {
         if (startDate != null && endDate != null) {
             // 날짜 범위를 입력 받았을 경우, 기간별 조회
             Page<Newsfeed> newsfeedPage = newsfeedRespository.findByCreatedAtBetween(startDate.atStartOfDay(), endDate.plusDays(1).atStartOfDay(), pageable);
+            if (newsfeedPage.isEmpty()) {
+                throw new CustomException(ErrorCode.NEWSFEED_PERIOD_EMPTY);
+            }
             return newsfeedPage.getContent().stream()
                     .map(NewsfeedResponseDto::new)
                     .toList();
         } else if (startDate == null && endDate == null) {
             // 날짜 범위를 전부 입력 받지 않았을 경우, 전체 조회
             Page<Newsfeed> newsfeedPage = newsfeedRespository.findAll(pageable);
+            if (newsfeedPage.isEmpty()) {
+                throw new CustomException(ErrorCode.NEWSFEED_EMPTY);
+            }
             return newsfeedPage.getContent().stream()
                     .map(NewsfeedResponseDto::new)
                     .toList();
