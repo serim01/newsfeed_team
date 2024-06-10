@@ -18,7 +18,8 @@ public enum ErrorCode {
     NEWSFEED_EMPTY(200,"먼저 작성하여 소식을 알려보세요!"),
     OTT_NOT_FOUND(404,"해당 이름의 OTT 를 찾을 수 없습니다."),
     COMMENT_NOT_FOUND(404,"댓글을 찾을 수 없습니다."),
-    COMMENT_NOT_USER(400, "해당 댓글의 작성자가 아닙니다.")
+    COMMENT_NOT_USER(400, "해당 댓글의 작성자가 아닙니다."),
+    MISSING_PERIOD_INPUT(400, "필요한 기간 입력이 누락되었습니다.")
     ;
     private int status;
     private String msg;
