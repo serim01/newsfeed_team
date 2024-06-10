@@ -43,8 +43,9 @@ public class AuthController {
         return authService.signup(requestDto);
     }
 
+    @Operation(summary = "mailCheck",description = "이메일 인증 api 입니다.")
     @PostMapping("/signup/mailCheck")
-    public ResponseEntity<String> AuthCheck(@RequestBody @Valid EmailCheckDto emailCheckDto){
+    public ResponseEntity<String> mailCheck(@RequestBody @Valid EmailCheckDto emailCheckDto){
         Boolean Checked=authService.CheckAuthNum(emailCheckDto.getEmail(),emailCheckDto.getAuthNum());
         if(Checked){
             return ResponseEntity.ok().body("이메일 인증 성공");
