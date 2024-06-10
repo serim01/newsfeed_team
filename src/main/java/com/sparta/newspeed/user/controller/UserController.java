@@ -1,5 +1,6 @@
 package com.sparta.newspeed.user.controller;
 
+import com.sparta.newspeed.mail.dto.EmailCheckDto;
 import com.sparta.newspeed.security.service.UserDetailsImpl;
 import com.sparta.newspeed.user.dto.UserInfoUpdateDto;
 import com.sparta.newspeed.user.dto.UserPwRequestDto;
@@ -9,6 +10,7 @@ import com.sparta.newspeed.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -50,5 +52,22 @@ public class UserController {
                                            @RequestBody @Valid UserStatusDto requestDto){
         userService.updateWithdraw(userDetails.getUser().getUserSeq(), requestDto);
         return ResponseEntity.ok("Update user withdraw");
+    }
+    @Operation(summary = "reMailSend",description = "인증되지않은 이메일 인증 메일을 보내는 api 입니다.")
+    @PostMapping("/reMailSend")
+    public ResponseEntity<String> reMailSend(@AuthenticationPrincipal UserDetailsImpl userDetails){
+        userService.mailSend(userDetails.getUser().getUserEmail());
+        return ResponseEntity.ok().body("인증 메일을 전송하였습니다.");
+    }
+
+    @Operation(summary = "reMailCheck",description = "인증되지않은 이메일 인증 api 입니다.")
+    @PostMapping("/reMailCheck")
+    public ResponseEntity<String> reMailCheck(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody @Valid EmailCheckDto emailCheckDto){
+        Boolean Checked = userService.CheckAuthNum(userDetails.getUser().getUserSeq(), emailCheckDto.getEmail(),emailCheckDto.getAuthNum());
+        if(Checked){
+            return ResponseEntity.ok().body("이메일 인증 성공");
+        }else{
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("이메일 인증 실패");
+        }
     }
 }
