@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Tag(name = "Newsfeed API", description = "Newsfeed API 입니다")
@@ -29,15 +30,19 @@ public class NewsfeedController {
         return ResponseEntity.status(HttpStatus.CREATED).body(newsfeedService.createNewsFeed(requestDto,userDetails.getUser()));
     }
 
-    @Operation(summary = "getNewsfeeds", description = "뉴스피드 전체조회 기능입니다.")
+    @Operation(summary = "getNewsfeeds", description = "뉴스피드 전체조회 기능입니다. 페이지네이션, 정렬 및 기간별 검색을 지원합니다.")
     @GetMapping
-    private ResponseEntity<List<NewsfeedResponseDto>> getNewsfeeds(){
-        return ResponseEntity.ok().body(newsfeedService.getNewsfeeds());
+    public ResponseEntity<List<NewsfeedResponseDto>> getNewsfeeds(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
+            @RequestParam(required = false) LocalDate startDate,
+            @RequestParam(required = false) LocalDate endDate) {
+        return ResponseEntity.ok().body(newsfeedService.getNewsfeeds(page, sortBy, startDate, endDate));
     }
 
     @Operation(summary = "getNewsfeed", description = "뉴스피드 선택조회 기능입니다.")
     @GetMapping("/{newsfeedSeq}")
-    private ResponseEntity<NewsfeedResponseDto> getNewsfeed(@PathVariable("newsfeedSeq") Long newsfeedSeq){
+    public ResponseEntity<NewsfeedResponseDto> getNewsfeed(@PathVariable("newsfeedSeq") Long newsfeedSeq) {
         return ResponseEntity.ok().body(newsfeedService.getNewsfeed(newsfeedSeq));
     }
 

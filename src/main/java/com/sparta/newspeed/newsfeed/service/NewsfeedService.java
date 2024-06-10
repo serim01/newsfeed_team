@@ -10,9 +10,14 @@ import com.sparta.newspeed.newsfeed.repository.NewsfeedRespository;
 import com.sparta.newspeed.newsfeed.repository.OttRepository;
 import com.sparta.newspeed.user.entity.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -22,14 +27,35 @@ public class NewsfeedService {
     private final NewsfeedRespository newsfeedRespository;
     private final OttRepository ottRepository;
 
-    public List<NewsfeedResponseDto> getNewsfeeds() {
-        List<Newsfeed> newsfeedList = newsfeedRespository.findAllByOrderByCreatedAtDesc();
-        if(newsfeedList.isEmpty()){
-            throw new CustomException(ErrorCode.NEWSFEED_EMPTY);
+    private static final int PAGE_SIZE = 10;
+
+    public List<NewsfeedResponseDto> getNewsfeeds(int page, String sortBy, LocalDate startDate, LocalDate endDate) {
+        Pageable pageable = PageRequest.of(page, PAGE_SIZE, getSortBy(sortBy));
+
+        if (startDate != null && endDate != null) {
+            // 날짜 범위를 입력 받았을 경우, 기간별 조회
+            Page<Newsfeed> newsfeedPage = newsfeedRespository.findByCreatedAtBetween(startDate.atStartOfDay(), endDate.plusDays(1).atStartOfDay(), pageable);
+            if (newsfeedPage.isEmpty()) {
+                throw new CustomException(ErrorCode.NEWSFEED_PERIOD_EMPTY);
+            }
+            return newsfeedPage.getContent().stream()
+                    .map(NewsfeedResponseDto::new)
+                    .toList();
+        } else if (startDate == null && endDate == null) {
+            // 날짜 범위를 전부 입력 받지 않았을 경우, 전체 조회
+            Page<Newsfeed> newsfeedPage = newsfeedRespository.findAll(pageable);
+            if (newsfeedPage.isEmpty()) {
+                throw new CustomException(ErrorCode.NEWSFEED_EMPTY);
+            }
+            return newsfeedPage.getContent().stream()
+                    .map(NewsfeedResponseDto::new)
+                    .toList();
+        } else {
+            // 기간 입력이 누락되었을 경우, 예외 처리
+            throw new CustomException(ErrorCode.MISSING_PERIOD_INPUT);
         }
-        return newsfeedList.stream().map(NewsfeedResponseDto::new)
-                .toList();
     }
+
     public NewsfeedResponseDto getNewsfeed(Long newsfeedSeq) {
         Newsfeed newsfeed = findNewsfeed(newsfeedSeq);
         return new NewsfeedResponseDto(newsfeed);
@@ -71,6 +97,15 @@ public class NewsfeedService {
     public void deleteNewsFeed(Long newsfeedSeq, User user) {
         Newsfeed newsfeed = findNewsfeed(newsfeedSeq, user);
         newsfeedRespository.delete(newsfeed);
+    }
+
+    // 좋아요 많은 순 또는 생성일자 기준 최신순 선택
+    private Sort getSortBy(String sortBy) {
+        if ("like".equals(sortBy)) {
+            return Sort.by("like").descending();
+        } else {
+            return Sort.by("createdAt").descending();
+        }
     }
 
     // 좋아요 증감 함수
