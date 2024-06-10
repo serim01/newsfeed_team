@@ -1,7 +1,9 @@
 package com.sparta.newspeed.user.service;
 
+import com.sparta.newspeed.auth.service.AuthService;
 import com.sparta.newspeed.common.exception.CustomException;
 import com.sparta.newspeed.common.exception.ErrorCode;
+import com.sparta.newspeed.common.util.RedisUtil;
 import com.sparta.newspeed.user.dto.UserInfoUpdateDto;
 import com.sparta.newspeed.user.dto.UserPwRequestDto;
 import com.sparta.newspeed.user.dto.UserResponseDto;
@@ -9,20 +11,18 @@ import com.sparta.newspeed.user.dto.UserStatusDto;
 import com.sparta.newspeed.user.entity.User;
 import com.sparta.newspeed.user.entity.UserRoleEnum;
 import com.sparta.newspeed.user.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
-
+    private final AuthService authService;
+    private final RedisUtil redisUtil;
 
     public UserResponseDto getUser(Long userSeq) {
         return new UserResponseDto(findById(userSeq));
@@ -75,4 +75,22 @@ public class UserService {
         // 회원 상태를 탈퇴로 변경
         user.updateRole(UserRoleEnum.WITHDRAW);
     }
+
+    public void mailSend(String userEmail) {
+        authService.joinEmail(userEmail);
+    }
+
+    @Transactional
+    public Boolean CheckAuthNum(Long userSeq, String email, String authNum) {
+        User user = findById(userSeq);
+            if (redisUtil.getData(authNum) == null) {
+                return false;
+            } else if (redisUtil.getData(authNum).equals(email)) {
+                user.updateRole(UserRoleEnum.USER);
+                return true;
+            } else {
+                return false;
+            }
+        }
+
 }

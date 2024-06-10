@@ -13,6 +13,8 @@ public enum ErrorCode {
     USER_NOT_VALID(400, "이미 탈퇴 처리된 유저입니다."),
     DUPLICATE_PASSWORD(400, "기존 비밀번호와 동일한 비밀번호입니다."),
     USER_NOT_UNIQUE(400,"중복된 사용자가 존재합니다."),
+    EMAIL_NOT_UNIQUE(400,"중복된 이메일이 존재합니다."),
+    EMAIL_FAIL(400,"이메일 전송에 실패했습니다."),
     INCORRECT_PASSWORD(400, "입력하신 비밀번호가 일치하지 않습니다."),
     NEWSFEED_NOT_FOUND(404,"뉴스피드를 찾을 수 없습니다."),
     NEWSFEED_NOT_USER(400, "해당 뉴스피드의 작성자가 아닙니다."),

@@ -3,8 +3,6 @@ package com.sparta.newspeed.security.oauth2;
 import com.sparta.newspeed.auth.service.AuthService;
 import com.sparta.newspeed.auth.social.OAuthAttributes;
 import com.sparta.newspeed.user.entity.User;
-import com.sparta.newspeed.user.repository.UserRepository;
-import com.sparta.newspeed.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
