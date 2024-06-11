@@ -27,6 +27,9 @@ public class Newsfeed extends Timestamped {
     @Column(name = "remain_member")
     private int remainMember;
 
+    @Column(name = "likes")
+    private Long like;
+
     @ManyToOne
     @JoinColumn(name = "user_seq")
     private User user;
@@ -41,4 +44,8 @@ public class Newsfeed extends Timestamped {
         this.remainMember = request.getRemainMember();
         this.ott = ott;
     }
+
+    public void increaseLike() { this.like++; }
+
+    public void decreaseLike() { this.like--; }
 }

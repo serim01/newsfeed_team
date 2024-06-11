@@ -1,7 +1,10 @@
 package com.sparta.newspeed.user.service;
 
+import com.sparta.newspeed.awss3.S3Service;
+import com.sparta.newspeed.auth.service.AuthService;
 import com.sparta.newspeed.common.exception.CustomException;
 import com.sparta.newspeed.common.exception.ErrorCode;
+import com.sparta.newspeed.common.util.RedisUtil;
 import com.sparta.newspeed.user.dto.UserInfoUpdateDto;
 import com.sparta.newspeed.user.dto.UserPwRequestDto;
 import com.sparta.newspeed.user.dto.UserResponseDto;
@@ -9,23 +12,28 @@ import com.sparta.newspeed.user.dto.UserStatusDto;
 import com.sparta.newspeed.user.entity.User;
 import com.sparta.newspeed.user.entity.UserRoleEnum;
 import com.sparta.newspeed.user.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.net.URL;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
-
+    private final AuthService authService;
+    private final RedisUtil redisUtil;
+    private final S3Service s3Service;
 
     public UserResponseDto getUser(Long userSeq) {
-        return new UserResponseDto(findById(userSeq));
+        User user = findById(userSeq);
+        UserResponseDto responseDto = new UserResponseDto(user);
+        responseDto.setPhotoUrl(s3Service.readFile(user.getPhotoName()));
+        return responseDto;
     }
 
     public User findById(Long userSeq) {
@@ -35,8 +43,12 @@ public class UserService {
     }
 
     @Transactional
-    public UserInfoUpdateDto updateUser(Long userSeq, UserInfoUpdateDto requestDto) {
+    public UserInfoUpdateDto updateUser(Long userSeq, UserInfoUpdateDto requestDto, MultipartFile file) {
         User user = findById(userSeq);
+        if (file != null) {
+            s3Service.deleteFile(user.getPhotoName());
+            user.setPhotoName(s3Service.uploadFile(file));
+        }
         user.updateUserInfo(requestDto);
         return new UserInfoUpdateDto(user);
     }
@@ -75,4 +87,22 @@ public class UserService {
         // 회원 상태를 탈퇴로 변경
         user.updateRole(UserRoleEnum.WITHDRAW);
     }
+
+    public void mailSend(String userEmail) {
+        authService.joinEmail(userEmail);
+    }
+
+    @Transactional
+    public Boolean CheckAuthNum(Long userSeq, String email, String authNum) {
+        User user = findById(userSeq);
+            if (redisUtil.getData(authNum) == null) {
+                return false;
+            } else if (redisUtil.getData(authNum).equals(email)) {
+                user.updateRole(UserRoleEnum.USER);
+                return true;
+            } else {
+                return false;
+            }
+        }
+
 }

@@ -11,8 +11,8 @@ import lombok.NoArgsConstructor;
 public class Ott {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "newsfeed_seq")
-    private Long newsFeedSeq;
+    @Column(name = "ott_seq")
+    private Long ottSeq;
 
     @Column(name = "ott_name")
     private String ottName;
