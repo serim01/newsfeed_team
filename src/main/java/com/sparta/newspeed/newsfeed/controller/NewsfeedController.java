@@ -48,13 +48,13 @@ public class NewsfeedController {
 
     @Operation(summary = "updateNewsfeed", description = "뉴스피드 수정 기능입니다.")
     @PutMapping("/{newsfeedSeq}")
-    private ResponseEntity<NewsfeedResponseDto> updateNewsfeed(@PathVariable("newsfeedSeq") Long newsfeedSeq, @Valid @RequestBody NewsfeedRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
+    public ResponseEntity<NewsfeedResponseDto> updateNewsfeed(@PathVariable("newsfeedSeq") Long newsfeedSeq, @Valid @RequestBody NewsfeedRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
         return ResponseEntity.ok().body(newsfeedService.updateNewsFeed(newsfeedSeq,requestDto,userDetails.getUser()));
     }
 
     @Operation(summary = "deleteNewsfeed", description = "뉴스피드 삭제 기능입니다.")
     @DeleteMapping("/{newsfeedSeq}")
-    private ResponseEntity<String> deleteNewsfeed(@PathVariable("newsfeedSeq") Long newsfeedSeq, @AuthenticationPrincipal UserDetailsImpl userDetails){
+    public ResponseEntity<String> deleteNewsfeed(@PathVariable("newsfeedSeq") Long newsfeedSeq, @AuthenticationPrincipal UserDetailsImpl userDetails){
         newsfeedService.deleteNewsFeed(newsfeedSeq,userDetails.getUser());
         return ResponseEntity.noContent().build();
     }

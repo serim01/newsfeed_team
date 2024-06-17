@@ -5,6 +5,7 @@ import com.sparta.newspeed.newsfeed.entity.Ott;
 import com.sparta.newspeed.user.entity.User;
 
 public interface NewsFeedMock {
+    Long NEWSFEED_SEQ = 1L;
     String TITLE = "넷플릭스 볼사람";
     String CONTENT = "넷플 같이 봅시다.";
     Integer MEMBER = 4;
@@ -19,7 +20,7 @@ public interface NewsFeedMock {
             .build();
 
     Newsfeed newsfeedMock = Newsfeed.builder()
-            .newsFeedSeq(1L)
+            .newsFeedSeq(NEWSFEED_SEQ)
             .title(TITLE).content(CONTENT)
             .remainMember(MEMBER)
             .like(LIKE).user(TEST_USER).ott(TEST_OTT).build();
