@@ -69,7 +69,7 @@ class SignUpRequestDtoTest implements UserMock {
             Set<ConstraintViolation<SignUpRequestDto>> violations = validator.validate(signUpRequestDto);
 
             // then
-            assertThat(violations).extracting("message").contains("must be a well-formed email address");
+            assertThat(violations).extracting("message").contains("이메일 양식에 맞추어 작성해주세요.");
         }
 
         @DisplayName("회원가입 실패_유저명")
@@ -81,7 +81,7 @@ class SignUpRequestDtoTest implements UserMock {
             Set<ConstraintViolation<SignUpRequestDto>> violations = validator.validate(signUpRequestDto);
 
             // then
-            assertThat(violations).extracting("message").contains("must not be blank");
+            assertThat(violations).extracting("message").contains("사용자 이름은 필수 입력값입니다.");
         }
     }
 }

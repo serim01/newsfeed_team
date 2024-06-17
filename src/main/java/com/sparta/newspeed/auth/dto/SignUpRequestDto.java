@@ -21,6 +21,6 @@ public class SignUpRequestDto {
     @NotBlank(message = "사용자 이름은 필수 입력값입니다.")
     private String userName;
 
-    @Email(message = "사용자 이메일은 필수 입력값입니다.")
+    @Email(message = "이메일 양식에 맞추어 작성해주세요.")
     private String email;
 }
