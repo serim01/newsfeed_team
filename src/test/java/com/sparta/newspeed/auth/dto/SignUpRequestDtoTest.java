@@ -28,10 +28,7 @@ class SignUpRequestDtoTest implements UserMock {
         @Test
         void SignupRequestDTO_success() {
             //given
-            SignUpRequestDto signUpRequestDto = SignUpRequestDto.builder().userId(USER_ID)
-                    .password(PASSWORD)
-                    .email(EMAIL)
-                    .userName(USER_NAME).build();
+            SignUpRequestDto signUpRequestDto = new SignUpRequestDto(USER_ID,PASSWORD,USER_NAME,EMAIL);
             //when
             Set<ConstraintViolation<SignUpRequestDto>> violations = validator.validate(signUpRequestDto);
 
@@ -43,10 +40,7 @@ class SignUpRequestDtoTest implements UserMock {
         @Test
         void SignupRequestDTO_fail_invalidPassword() {
             //given
-            SignUpRequestDto signUpRequestDto = SignUpRequestDto.builder().userId(USER_ID)
-                    .password("123456789a")
-                    .email(EMAIL)
-                    .userName(USER_NAME).build();
+            SignUpRequestDto signUpRequestDto = new SignUpRequestDto(USER_ID,"123456789a",USER_NAME,EMAIL);
             //when
             Set<ConstraintViolation<SignUpRequestDto>> violations = validator.validate(signUpRequestDto);
 
@@ -58,10 +52,7 @@ class SignUpRequestDtoTest implements UserMock {
         @Test
         void SignupRequestDTO_fail_invalidUserId() {
             //given
-            SignUpRequestDto signUpRequestDto = SignUpRequestDto.builder().userId("invalid_user_id!")
-                    .password(PASSWORD)
-                    .email(EMAIL)
-                    .userName(USER_NAME).build();
+            SignUpRequestDto signUpRequestDto = new SignUpRequestDto("invalid_user_id!",PASSWORD,USER_NAME,EMAIL);
             //when
             Set<ConstraintViolation<SignUpRequestDto>> violations = validator.validate(signUpRequestDto);
 
@@ -73,10 +64,7 @@ class SignUpRequestDtoTest implements UserMock {
         @Test
         void SignupRequestDTO_fail_invalidEmail() {
             //given
-            SignUpRequestDto signUpRequestDto = SignUpRequestDto.builder().userId(USER_ID)
-                    .password(PASSWORD)
-                    .email("invalid-email")
-                    .userName(USER_NAME).build();
+            SignUpRequestDto signUpRequestDto =  new SignUpRequestDto(USER_ID,PASSWORD,USER_NAME,"invalid-email");
             //when
             Set<ConstraintViolation<SignUpRequestDto>> violations = validator.validate(signUpRequestDto);
 
@@ -88,10 +76,7 @@ class SignUpRequestDtoTest implements UserMock {
         @Test
         void SignupRequestDTO_fail_blankUserName() {
             //given
-            SignUpRequestDto signUpRequestDto = SignUpRequestDto.builder().userId(USER_ID)
-                    .password(PASSWORD)
-                    .email(EMAIL)
-                    .userName("").build();
+            SignUpRequestDto signUpRequestDto = new SignUpRequestDto(USER_ID,PASSWORD,"",EMAIL);
             //when
             Set<ConstraintViolation<SignUpRequestDto>> violations = validator.validate(signUpRequestDto);
 

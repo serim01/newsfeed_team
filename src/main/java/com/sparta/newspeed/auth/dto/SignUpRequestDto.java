@@ -3,13 +3,11 @@ package com.sparta.newspeed.auth.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
-
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
-@Builder
+@AllArgsConstructor
 public class SignUpRequestDto {
 
     @Pattern(regexp = "^[a-zA-Z0-9]{10,20}$",
@@ -20,12 +18,9 @@ public class SignUpRequestDto {
             message = "비밀번호는 대소문자 포함 영문 + 숫자 + 특수문자를 최소 1글자씩 포함해야 합니다.")
     private String password;
 
-    @NotBlank
+    @NotBlank(message = "사용자 이름은 필수 입력값입니다.")
     private String userName;
 
-    @Email
+    @Email(message = "사용자 이메일은 필수 입력값입니다.")
     private String email;
-
-    private boolean admin = false;
-    private String adminToken = "";
 }
