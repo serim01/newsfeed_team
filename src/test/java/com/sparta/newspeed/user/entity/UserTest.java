@@ -17,7 +17,6 @@ class UserTest implements UserMock {
         User user = userMock;
 
         // then
-        assertThat(user.getUserSeq()).isEqualTo(1L);
         assertThat(user.getUserName()).isEqualTo(USER_NAME);
         assertThat(user.getUserId()).isEqualTo(USER_ID);
         assertThat(user.getUserPassword()).isEqualTo(PASSWORD);

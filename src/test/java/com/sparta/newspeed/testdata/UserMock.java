@@ -9,8 +9,13 @@ public interface UserMock {
     String PASSWORD = "123456789a!";
     String EMAIL = "test@gmail.com";
 
-    User userMock = User.builder().userSeq(1L)
+    User userMock = User.builder()
             .userName(USER_NAME)
+            .userId(USER_ID)
+            .userPassword(PASSWORD)
+            .userEmail(EMAIL).role(UserRoleEnum.USER).build();
+    User another = User.builder()
+            .userName(USER_NAME+"another")
             .userId(USER_ID)
             .userPassword(PASSWORD)
             .userEmail(EMAIL).role(UserRoleEnum.USER).build();

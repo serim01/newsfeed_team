@@ -28,7 +28,6 @@ class NewsfeedTest implements UserMock, NewsFeedMock {
         Newsfeed newsfeed = this.newsfeed;
 
         // then
-        assertThat(newsfeed.getNewsFeedSeq()).isEqualTo(1L);
         assertThat(newsfeed.getTitle()).isEqualTo(TITLE);
         assertThat(newsfeed.getContent()).isEqualTo(CONTENT);
         assertThat(newsfeed.getRemainMember()).isEqualTo(MEMBER);

@@ -20,7 +20,6 @@ public interface NewsFeedMock {
             .build();
 
     Newsfeed newsfeedMock = Newsfeed.builder()
-            .newsFeedSeq(NEWSFEED_SEQ)
             .title(TITLE).content(CONTENT)
             .remainMember(MEMBER)
             .like(LIKE).user(TEST_USER).ott(TEST_OTT).build();
